@@ -23,9 +23,8 @@ function getTodayDate() {
 app.get("/getNews", async (req, res) => {
     const todayDate = getTodayDate();
     try {
-        const { startingPrice, mileage } = req.query;
-        const bikes = await Bike.find(query);
-        res.json(bikes);
+        const news = await News.find();
+        res.json(news);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -43,7 +42,7 @@ app.post("/addNews", async (req, res) => {
         "image": req.body.image,
         "pdfLink": req.body.pdfLink
     };
-    console.log(newsData);
+    // console.log(newsData);
     const newNews = new News(newsData);
 
     try {
@@ -93,9 +92,6 @@ app.post("/filterByMonth", async (req, res) => {
         // Convert to "DD/MM/YYYY" format
         const formattedStartDate = `${startDate.getDate().toString().padStart(2, '0')}/${(startDate.getMonth() + 1).toString().padStart(2, '0')}/${startDate.getFullYear()}`;
         const formattedEndDate = `${endDate.getDate().toString().padStart(2, '0')}/${(endDate.getMonth() + 1).toString().padStart(2, '0')}/${endDate.getFullYear()}`;
-
-        console.log(formattedStartDate);
-        console.log(formattedEndDate);
 
         const filteredNews = await News.find({
             publishDate: { $gte: formattedStartDate, $lt: formattedEndDate }
