@@ -7,6 +7,14 @@ const app= express();
 app.use(express.json());
 
 app.use(cors());
+app.use(
+	cors({
+		// origin: "http://localhost:3000",
+		origin: "https://kovai-news-api.onrender.com",
+		methods: "GET,POST,PUT,DELETE",
+		credentials: true,
+	})
+);
 
 function getTodayDate() {
     const today = new Date();
