@@ -24,13 +24,6 @@ app.get("/getNews", async (req, res) => {
     const todayDate = getTodayDate();
     try {
         const { startingPrice, mileage } = req.query;
-        // A D D   other query params and their variables
-        const query = {};
-
-        if (startingPrice) query.startingPrice = { $gte: parseInt(price) };
-        if (mileage) query.mileage = { $gte: parseInt(mileage) };
-        console.log(query);
-
         const bikes = await Bike.find(query);
         res.json(bikes);
     } catch (error) {
@@ -58,6 +51,60 @@ app.post("/addNews", async (req, res) => {
         res.status(200).json(savedNews);
     } catch (error) {
         res.status(500).json(error);
+    }
+});
+// F I L T E R   BY YEAR
+app.post("/filterByYear", async (req, res) => {
+    try {
+        const { year } = req.body;
+        if (!year) {
+            return res.status(400).json({ error: 'Year is required in the request body.' });
+        }
+
+        const startDate = new Date(`${year}-01-01`);
+        const endDate = new Date(`${year}-12-31`);
+
+        //"DD/MM/YYYY" format
+        const formattedStartDate = `${startDate.getDate().toString().padStart(2, '0')}/${(startDate.getMonth() + 1).toString().padStart(2, '0')}/${startDate.getFullYear()}`;
+        const formattedEndDate = `${endDate.getDate().toString().padStart(2, '0')}/${(endDate.getMonth() + 1).toString().padStart(2, '0')}/${endDate.getFullYear()}`;
+
+        const filteredNews = await News.find({
+            publishDate: { $gte: formattedStartDate, $lte: formattedEndDate }
+        });
+
+        res.status(200).json(filteredNews);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+// F I L T E R   BY MONTH AND YEAR
+app.post("/filterByMonth", async (req, res) => {
+    try {
+        const { year, month } = req.body;
+
+        if (!year || !month) {
+            return res.status(400).json({ error: 'Both year and month are required in the request body.' });
+        }
+
+        const startDate = new Date(`${year}-${month}-01`);
+        const endDate = new Date(`${year}-${parseInt(month) + 1}-01`);
+
+        // Convert to "DD/MM/YYYY" format
+        const formattedStartDate = `${startDate.getDate().toString().padStart(2, '0')}/${(startDate.getMonth() + 1).toString().padStart(2, '0')}/${startDate.getFullYear()}`;
+        const formattedEndDate = `${endDate.getDate().toString().padStart(2, '0')}/${(endDate.getMonth() + 1).toString().padStart(2, '0')}/${endDate.getFullYear()}`;
+
+        console.log(formattedStartDate);
+        console.log(formattedEndDate);
+
+        const filteredNews = await News.find({
+            publishDate: { $gte: formattedStartDate, $lt: formattedEndDate }
+        });
+
+        res.status(200).json(filteredNews);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
