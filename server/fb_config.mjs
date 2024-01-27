@@ -112,13 +112,13 @@ const createData = async (node, data) => {
 //     console.error('Error reading data:', error);
 //   });
 
-//   readAllData('chat')
-//   .then(chatData => {
-//     console.log(chatData);
-//   })
-//   .catch(error => {
-//     console.error('Error reading data:', error);
-//   });
+  readAllData('chat')
+  .then(chatData => {
+    console.log(chatData);
+  })
+  .catch(error => {
+    console.error('Error reading data:', error);
+  });
 
   
 export { createData, readAllData, readOneData, updateData, deleteData };
